@@ -6,6 +6,14 @@ Streamlit Community Cloud 배포 시 Secrets에 OPENAI_API_KEY를 설정하세�
 from __future__ import annotations
 
 import os
+from pathlib import Path
+
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv(Path(__file__).resolve().parent / ".env")
+except ImportError:
+    pass
 
 import streamlit as st
 from openai import OpenAI
@@ -15,7 +23,7 @@ SYSTEM_PROMPT = "You are a helpful assistant. Answer clearly and concisely."
 
 
 def get_api_key() -> str:
-    """Streamlit Secrets 우선, 없으면 환경 변수."""
+    """Cloud: Streamlit Secrets. 로컬: .streamlit/secrets.toml 또는 .env / 환경 변수."""
     try:
         key = st.secrets.get("OPENAI_API_KEY", "")
         if key:
@@ -44,10 +52,12 @@ def main() -> None:
 
     api_key = get_api_key()
     if not api_key:
-        st.error(
-            "OpenAI API 키가 없습니다. "
-            "로컬: `.streamlit/secrets.toml`에 `OPENAI_API_KEY` 설정. "
-            "Cloud: 앱 설정 → Secrets에 동일 키 추가."
+        st.error("OpenAI API 키가 없습니다.")
+        st.info(
+            "로컬: 프로젝트 폴더에 `.env`를 만들고 `OPENAI_API_KEY=sk-...` 를 넣거나 "
+            "(`.env.example` 참고), `.streamlit/secrets.toml`에 동일 키를 넣으세요.\n\n"
+            "Streamlit Cloud: 앱 Settings → Secrets에 "
+            '`OPENAI_API_KEY = "sk-..."` 형식으로 추가하세요.'
         )
         st.stop()
 
