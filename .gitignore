@@ -1,0 +1,10 @@
+# Streamlit secrets (로컬 개발용 — 실제 키는 여기 넣지 마세요)
+.streamlit/secrets.toml
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.local
